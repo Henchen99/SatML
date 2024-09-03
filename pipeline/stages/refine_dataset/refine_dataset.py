@@ -1,6 +1,24 @@
 import warnings
+from abc import ABC, abstractmethod
 
-class RefineDataset:
+class AbstractRefineDatasetStage(ABC):
+    @abstractmethod
+    def run(self):
+        """
+        Run the RefineDataset stage.
+        """
+        pass
+
+
+
+
+
+
+
+
+
+
+class DummyRefineDataset(AbstractRefineDatasetStage):
     def __init__(self, config):
         self.config = config
 

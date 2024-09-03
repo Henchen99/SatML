@@ -1,6 +1,25 @@
 import warnings
+from abc import ABC, abstractmethod
 
-class Taxonomy:
+class AbstractTaxonomyStage(ABC):
+    @abstractmethod
+    def run(self):
+        """
+        Run the Taxonomy stage.
+        """
+        pass
+
+
+
+
+
+
+
+
+
+
+
+class DummyTaxonomy(AbstractTaxonomyStage):
     def __init__(self, config):
         self.config = config
 

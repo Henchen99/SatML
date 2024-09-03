@@ -1,1 +1,1 @@
-from .generate import Generate
+from .generate import GenerateHC

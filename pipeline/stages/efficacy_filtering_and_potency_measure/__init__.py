@@ -1,1 +1,1 @@
-from .efficacy_filtering_and_potency_measure import EfficacyFilteringAndPotencyMeasure
+from .efficacy_filtering_and_potency_measure import DummyEfficacyFilteringAndPotencyMeasure

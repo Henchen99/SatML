@@ -1,7 +1,24 @@
 import csv
 import openai
+from abc import ABC, abstractmethod
 
-class EnrichAndAnnotate:
+class AbstractEnrichAndAnnotateStage(ABC):
+    @abstractmethod
+    def run(self):
+        """
+        Run the EnrichAndAnnotate stage.
+        """
+        pass
+
+
+
+
+
+
+
+
+
+class EnrichAndAnnotate(AbstractEnrichAndAnnotateStage):
     def __init__(self, config, input_csv_file_path, output_csv_file_path):
         self.api_key = config['api_key']
         self.model = config['model']

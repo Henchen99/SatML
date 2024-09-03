@@ -1,6 +1,22 @@
 import warnings
+from abc import ABC, abstractmethod
 
-class EfficacyFilteringAndPotencyMeasure:
+class AbstractEfficacyFilteringAndPotencyMeasureStage(ABC):
+    @abstractmethod
+    def run(self):
+        """
+        Run the EfficacyFilteringAndPotencyMeasure stage.
+        """
+        pass
+
+
+
+
+
+
+
+
+class DummyEfficacyFilteringAndPotencyMeasure(AbstractEfficacyFilteringAndPotencyMeasureStage):
     def __init__(self, config):
         self.config = config
 

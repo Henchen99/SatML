@@ -1,6 +1,21 @@
 import warnings
+from abc import ABC, abstractmethod
 
-class Classifier:
+class AbstractClassifierStage(ABC):
+    @abstractmethod
+    def run(self):
+        """
+        Run the Classifier stage.
+        """
+        pass
+
+
+
+
+
+
+
+class DummyClassifier(AbstractClassifierStage):
     def __init__(self, config):
         self.config = config
 

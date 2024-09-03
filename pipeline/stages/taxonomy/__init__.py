@@ -1,1 +1,1 @@
-from .taxonomy import Taxonomy
+from .taxonomy import DummyTaxonomy

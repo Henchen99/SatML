@@ -1,8 +1,23 @@
 import os
 import csv
 from openai import OpenAI
+from abc import ABC, abstractmethod
 
-class Generate:
+class AbstractGenerateStage(ABC):
+    @abstractmethod
+    def run(self):
+        """
+        Run the Generate stage.
+        """
+        pass
+
+
+
+
+
+
+
+class GenerateHC(AbstractGenerateStage):
     def __init__(self, config, generated_attack_csv_file_path):
         self.api_key = config['api_key']
         self.model = config['model']

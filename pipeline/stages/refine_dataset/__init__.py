@@ -1,1 +1,1 @@
-from .refine_dataset import RefineDataset
+from .refine_dataset import DummyRefineDataset
