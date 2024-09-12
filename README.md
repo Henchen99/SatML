@@ -1,11 +1,14 @@
 # SatML
 
-Before running the code, each implemented version needs to set up their own configuration file, version_config.json. This file contains settings specific to the version's environment and is required for the code to run correctly.
+## Configuration Setup
 
-Format
+Before running the code, **each implemented version needs to set up their own configuration file**, `version_config.json`. This file contains settings specific to the version's environment and is required for the code to run correctly.
 
-The user_config.json file should be in the following format:
-JSON
+### Format
+
+The `version_config.json` file should be in the following format:
+
+```json
 {
     "sampled_data_json_file_path": "path/to/annotated/data.json",
     "generated_attack_json_file_path": "path/to/generated/attacks.json",
