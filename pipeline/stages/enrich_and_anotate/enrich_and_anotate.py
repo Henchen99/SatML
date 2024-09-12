@@ -19,11 +19,11 @@ class AbstractEnrichAndAnnotateStage(ABC):
 
 
 class EnrichAndAnnotate(AbstractEnrichAndAnnotateStage):
-    def __init__(self, config, input_json_file_path, output_json_file_path):
+    def __init__(self, config):
         self.api_key = config['api_key']
         self.model = config['model']
-        self.input_json_file_path = input_json_file_path
-        self.output_json_file_path = output_json_file_path
+        self.input_json_file_path = config['enrich_and_anotate']['input_json_file_path']
+        self.output_json_file_path = config['enrich_and_anotate']['output_json_file_path']
         self.client = openai.OpenAI(api_key=self.api_key)
 
     def enrich_and_annotate(self):

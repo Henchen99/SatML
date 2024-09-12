@@ -1,0 +1,5 @@
+{
+    "sampled_data_json_file_path": "data/annotated_output/collected_annotated.json",
+    "generated_attack_json_file_path": "data/generated_attacks/bk_generated_attacks.json",
+    "generation_strat": "BK"
+}

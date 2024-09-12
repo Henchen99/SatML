@@ -1,0 +1,15 @@
+{
+    "taxonomy": {},
+    "enrich_and_anotate": {
+        "input_json_file_path": "data/collected_data/collected_data.json",
+        "output_json_file_path": "data/annotated_output/collected_annotated.json"
+    },
+    "generate":{
+        "bk_generator": "stages/generate/bk_generator/bk_config.json",
+        "hc_generator": "stages/generate/hc_generator/hc_config.json"
+    },
+    "attack_type": "jailbreak",
+    "model": "gpt-4o-mini",
+    "generation_strat": "",
+    "api_key": ""
+}
