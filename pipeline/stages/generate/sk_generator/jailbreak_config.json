@@ -2,10 +2,10 @@
     "seed_data_fp": "/Users/skeshari/Project/generation_fwk/SatML/pipeline/data/collected_data/collected_data.json",
     "seed_explanation_fp": "./explanation_data.json",
     
-    "api_key": "10d496f33145474aafc3e61cf1e44604",
-    "api_version": "2024-02-15-preview",
-    "deployment_name": "tony-chatgpt-4k",
-    "base_url": "https://tuli.openai.azure.com/",
+    "api_key": "",
+    "api_version": "",
+    "deployment_name": "",
+    "base_url": "",
     "max_tokens": 2048,
     "temperature": 1,
   
