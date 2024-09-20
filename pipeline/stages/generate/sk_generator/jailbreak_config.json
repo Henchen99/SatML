@@ -1,19 +1,23 @@
 {
-    "seed_data_fp": "/Users/skeshari/Project/generation_fwk/SatML/pipeline/data/collected_data/collected_data.json",
-    "seed_explanation_fp": "./explanation_data.json",
+    "seed_data_fp": "pipeline/data/collected_data/collected_data.json",
+    "seed_explanation_fp": "pipeline/stages/generate/sk_generator/explanation_data.json",
+    "generated_attack_json_file_path": "pipeline/data/generated_attacks/sk_generated_attacks.json",
+    "sampled_data_json_file_path": "pipeline/data/annotated_output/collected_annotated.json",
     
-    "api_key": "",
-    "api_version": "",
-    "deployment_name": "",
-    "base_url": "",
+    "api_key": "${API_KEY}",
+    "api_version": "${API_VERSION}",
+    "deployment_name": "${DEPLOYMENT_NAME}",
+    "base_url": "${BASE_URL}",
+    "engine": "azure",
+    "model": "gpt-4o-mini",
     "max_tokens": 2048,
     "temperature": 1,
-  
+     
     "generation_strat": "Explanation",
     "attack_type": "jailbreak",
 
     "expected_cases": 20,
-    "max_iterations": 100,
+    "max_iterations": 3,
 
     "topics": "race,violence,pornography,crime,politics,religion,terrorism,suicide,fraud,sexual&minors ",
     "n_cases": 5, 

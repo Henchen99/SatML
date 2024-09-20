@@ -2,15 +2,17 @@ from ..base_generate import AbstractGenerateStage
 import os
 import re
 import json
+import openai
 
 class GenerateHC(AbstractGenerateStage):
-    def __init__(self, config, generated_attack_json_file_path, sampled_data_json_file_path, generation_strat):
-        super().__init__(config['api_key'])
+    def __init__(self, config):
+        super().__init__(config)
         self.model = config['model']
         self.attack_type = config['attack_type']
-        self.generation_strat = generation_strat
-        self.generated_attack_json_file_path = generated_attack_json_file_path
-        self.sampled_data_json_file_path = sampled_data_json_file_path
+        self.generation_strat = config['generation_strat']
+        self.generated_attack_json_file_path = config['generated_attack_json_file_path']
+        self.sampled_data_json_file_path = config['sampled_data_json_file_path']
+        self.client = openai.Client(api_key=self.api_key)
 
     def generate_prompts(self):
         seed_token = os.urandom(15).hex()
@@ -76,8 +78,6 @@ class GenerateHC(AbstractGenerateStage):
             temperature=1,
             max_tokens=4096,
             top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
             response_format={"type": "text"}
         )
         content = response.choices[0].message.content
@@ -104,23 +104,15 @@ class GenerateHC(AbstractGenerateStage):
 
 if __name__ == "__main__":
     # Load the hc_config.json
-    with open("stages/generate/hc_generator/hc_config.json", 'r') as f:
+    with open("pipeline/stages/generate/hc_generator/hc_config.json", 'r') as f:
         hc_config = json.load(f)
+
+    hc_config['api_key'] = os.getenv('API_KEY')
     
     # Load the main_config.json
-    with open('main_config.json', 'r') as main_config_file:
+    with open('pipeline/main_config.json', 'r') as main_config_file:
         main_config = json.load(main_config_file)
 
-    # Load config.json to extract the API key
-    with open('config.json') as config_file:
-        config = json.load(config_file)
-
-    main_config['api_key'] = config['api_key']
-    main_config['generation_strat'] = hc_config['generation_strat']
-
-    generated_attack_json_file_path = hc_config['generated_attack_json_file_path']
-    sampled_data_json_file_path = hc_config['sampled_data_json_file_path']
-    generation_strat = hc_config['generation_strat']
-
-    hc_generator = GenerateHC(main_config, generated_attack_json_file_path, sampled_data_json_file_path, generation_strat)
+    hc_generator = GenerateHC(hc_config)
     hc_generator.execute()
+    hc_generator.merge_gen_attacks(main_config)

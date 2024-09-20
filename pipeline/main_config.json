@@ -1,15 +1,18 @@
 {
     "taxonomy": {},
+
     "enrich_and_anotate": {
-        "input_json_file_path": "data/collected_data/collected_data.json",
-        "output_json_file_path": "data/annotated_output/collected_annotated.json"
+        "input_json_file_path": "pipeline/data/collected_data/collected_data.json",
+        "output_json_file_path": "pipeline/data/annotated_output/collected_annotated.json"
     },
+    
     "generate":{
-        "bk_generator": "stages/generate/bk_generator/bk_config.json",
-        "hc_generator": "stages/generate/hc_generator/hc_config.json"
+        "bk_generator": "pipeline/stages/generate/bk_generator/bk_config.json",
+        "hc_generator": "pipeline/stages/generate/hc_generator/hc_config.json",
+        "sk_generator": "pipeline/stages/generate/sk_generator/jailbreak_config.json"
     },
-    "attack_type": "jailbreak",
-    "model": "gpt-4o-mini",
-    "generation_strat": "",
-    "api_key": ""
+
+    "merge": {
+        "combined_file_path": "pipeline/data/generated_attacks/combined_generated_attacks.json"
+    }
 }

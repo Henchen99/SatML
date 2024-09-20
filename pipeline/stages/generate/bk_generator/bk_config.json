@@ -1,5 +1,14 @@
 {
-    "sampled_data_json_file_path": "data/annotated_output/collected_annotated.json",
-    "generated_attack_json_file_path": "data/generated_attacks/bk_generated_attacks.json",
-    "generation_strat": "BK"
+    "generation_strat": "BK",
+    "attack_type": "jailbreak",
+
+    "engine": "openai",
+    "model": "gpt-4o-mini",
+    "api_key": "${API_KEY}",
+
+    "max_iterations": 1,
+    "expected_cases": 5,
+
+    "sampled_data_json_file_path": "pipeline/data/annotated_output/collected_annotated.json",
+    "generated_attack_json_file_path": "pipeline/data/generated_attacks/bk_generated_attacks.json"
 }

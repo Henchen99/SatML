@@ -5,13 +5,15 @@ from abc import ABC, abstractmethod
 import inspect
 import importlib
 import pkgutil
+from dotenv import load_dotenv
+import os
 
+load_dotenv('pipeline/.env')
 
-class AbstractGenerateStage(ABC):
-    
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self.client = OpenAI(api_key=self.api_key)
+class AbstractGenerateStage:
+    def __init__(self, config):
+        self.config = config
+        self.api_key = os.getenv('API_KEY')
 
     def save_prompts_to_json(self, prompts, attack_type, gen_strat):
         """
@@ -71,12 +73,39 @@ class AbstractGenerateStage(ABC):
                 if inspect.isclass(obj) and issubclass(obj, AbstractGenerateStage) and obj != AbstractGenerateStage:
                     stage_class = obj
                     break
-
+            # print(stage_config)
             stage_instance = stage_class(
-                config,
-                stage_config.get('generated_attack_json_file_path', ''),
-                stage_config.get('sampled_data_json_file_path', ''),
-                stage_config.get('generation_strat', '')
+                stage_config,
             )
 
             stage_instance.execute()
+
+    @classmethod
+    def merge_gen_attacks(cls, config):
+        """
+        Merge all generated attack files into a single file.
+
+        Parameters:
+        - config (dict): Main config dictionary
+        """
+        combined_file_path = config["merge"]["combined_file_path"]
+
+        # Get a list of all generated attack files
+        gen_attack_files = []
+        for stage_name, stage_config_path in config['generate'].items():
+            with open(stage_config_path, 'r') as f:
+                stage_config = json.load(f)
+            gen_attack_files.append(stage_config['generated_attack_json_file_path'])
+
+        # Merge all generated attack files into a single file
+        combined_data = []
+        for file_path in gen_attack_files:
+            with open(file_path, 'r') as file:
+                try:
+                    data = json.load(file)
+                except json.JSONDecodeError:
+                    data = []
+            combined_data.extend(data)
+
+        with open(combined_file_path, 'w') as file:
+            json.dump(combined_data, file, indent=4)
