@@ -4,14 +4,23 @@ import json
 import random
 #from base_generate import AbstractGenerateStage
 import pandas as pd
-from ..language_models import OpenAI
+from ....language_models.azure_openai import AzureOpenAI
+from ....language_models.openai import OpenAI
+import time
 
 class ExplanationBasedGenerator(object):
     def __init__(self,config):
         #super().__init__(config['api_key'])
         self.config = config
-        self.model = OpenAI(config)
+        # Select the language model based on the engine in the config
+        if config.get("engine") == "azure":
+            self.model = AzureOpenAI(config)
+        elif config.get("engine") == "openai":
+            self.model = OpenAI(config)
+        else:
+            raise ValueError(f"Unsupported engine: {config.get('engine')}")
         self._method = "attack_explanation"
+        self.generation_strat = "jailbreak"
 
     def _read_json(self,fp):
         with open(fp, 'r') as file:
@@ -21,8 +30,8 @@ class ExplanationBasedGenerator(object):
         prompts_df = pd.DataFrame(self._read_json(self.config["seed_data_fp"]))
         explanation_data_df = pd.DataFrame(self._read_json(self.config["seed_explanation_fp"]))
         
-        data_df = prompts_df.merge(explanation_data_df,on="id",how="inner")
-        data_df['seed'] = data_df[['prompt','explanation']].apply(lambda x: f'{x[0]}\n\n<Explanation>: {x[1]}',axis=1)
+        data_df = prompts_df.merge(explanation_data_df, left_on="SHA-256", right_on="id", how="inner")
+        data_df['seed'] = data_df[['text','explanation']].apply(lambda x: f'{x[0]}\n\n<Explanation>: {x[1]}',axis=1)
         return data_df['seed'].values.tolist()
     
     def execute(self):
@@ -39,12 +48,14 @@ class ExplanationBasedGenerator(object):
         template = self.config["prompt_template"]
 
         while (num_cases < expected_cases) & (num_iterations<=max_iterations):
+            time.sleep(1)
             num_iterations +=1
             topic = random.choice(topics)
             random_seeds = random.sample(seed_prompts,self.config["n_cases"])
             prompt = template.format(*random_seeds,topic)
+            # print(prompt)
             text = self.model(prompt)
-
+            # text = self.model({"role": "user", "content": prompt})
             try:
                 match = re.search(r'<CASE>(.*?)<Explanation>', text, re.DOTALL)                
             except:
