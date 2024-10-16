@@ -4,9 +4,9 @@ from openai import OpenAI
 from abc import ABC, abstractmethod
 import inspect
 import importlib
-import pkgutil
 from dotenv import load_dotenv
 import os
+import sys
 
 load_dotenv('pipeline/.env')
 
@@ -15,7 +15,7 @@ class AbstractGenerateStage:
         self.config = config
         self.api_key = os.getenv('API_KEY')
 
-    def save_prompts_to_json(self, prompts, attack_type, gen_strat):
+    def save_prompts_to_json(self, prompts, attack_type, gen_strat, version):
         """
         Save the generated prompts to a JSON file in the required format.
 
@@ -23,6 +23,7 @@ class AbstractGenerateStage:
         - prompts (list): List of generated prompts to save
         - attack_type (str): Type of attack used to generate prompts
         - gen_strat (str): Generation strategy used to generate prompts
+        - version (str): Version of current strategy used to generate prompts
         
         """
         if os.path.exists(self.generated_attack_json_file_path):
@@ -40,7 +41,8 @@ class AbstractGenerateStage:
             formatted_prompts.append({
                 "prompt": prompt,
                 "attack_type": attack_type,
-                "generation_strat": gen_strat
+                "generation_strat": gen_strat,
+                "version": version
             })
 
         existing_data.extend(formatted_prompts)
@@ -63,20 +65,25 @@ class AbstractGenerateStage:
             # Load the stage config from the specified file
             with open(stage_config_path, 'r') as f:
                 stage_config = json.load(f)
+                # print(stage_config)
 
             # Dynamically import the stage module
             stage_module_name = f"stages.generate.{stage_name}.generate"
             stage_module = importlib.import_module(stage_module_name)
 
             # Find the stage class in the module
+            stage_class = None
             for name, obj in inspect.getmembers(stage_module):
                 if inspect.isclass(obj) and issubclass(obj, AbstractGenerateStage) and obj != AbstractGenerateStage:
                     stage_class = obj
                     break
-            # print(stage_config)
-            stage_instance = stage_class(
-                stage_config,
-            )
+
+            if stage_class is None:
+                raise ImportError(f"No valid class found in module {stage_module_name} that inherits from AbstractGenerateStage.")
+
+            print(f"\nRunning generator: {stage_name}")
+            # print(f"Stage class: {stage_class}")
+            stage_instance = stage_class(stage_config)
 
             stage_instance.execute()
 

@@ -6,11 +6,11 @@ import json
 
 load_dotenv()
 
-class OpenAI(LanguageModel):
+class OpenAi(LanguageModel):
     def __init__(self, config):
         super().__init__(config)
         self.apikey = os.getenv('API_KEY')
-        self.model = config['model']  
+        self.model = config['model']
         self.temperature = config['temperature']
         self.max_tokens = config['max_tokens']
         self._set_config()

@@ -19,7 +19,7 @@ class AbstractTaxonomyStage(ABC):
         hashed_data = []
         for row in data:
             # check if id is already hashed
-            if len(str(row["id"])) == 64:
+            if len(str(row["SHA-256"])) == 64:
                 hashed_data.append(row)
             else:
                 # Create a new SHA-256 hash object

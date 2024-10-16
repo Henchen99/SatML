@@ -15,9 +15,10 @@
      
     "generation_strat": "Explanation",
     "attack_type": "jailbreak",
+    "version": "1.0.0",
 
     "expected_cases": 5,
-    "max_iterations": 10,
+    "max_iterations": 3,
 
     "topics": "race,violence,pornography,crime,politics,religion,terrorism,suicide,fraud,sexual&minors ",
     "n_cases": 5, 
