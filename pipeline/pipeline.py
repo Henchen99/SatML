@@ -16,7 +16,7 @@ with open('pipeline/main_config.json', 'r') as main_config_file:
 taxonomy_stage = DummyTaxonomy(
     main_config,
 )
-taxonomy_stage.run()
+# taxonomy_stage.run()
 
 # Generate Stage
 AbstractGenerateStage.run(main_config)

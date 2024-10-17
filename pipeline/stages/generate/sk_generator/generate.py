@@ -6,17 +6,19 @@ from ..base_generate import AbstractGenerateStage
 import pandas as pd
 from language_models.azure_openai import AzureOpenAI
 from language_models.openai_model import OpenAi
+from language_models.llama3 import llama3
 import time
 
 class ExplanationBasedGenerator(AbstractGenerateStage):
     def __init__(self,config):
         super().__init__(config['api_key'])
         self.config = config
-        # print(self.config)
         if config.get("engine") == "azure":
             self.model = AzureOpenAI(config)
         elif config.get("engine") == "openai":
             self.model = OpenAi(config)
+        elif config.get("llama3") == "llama3":
+            self.model = llama3(config)
         else:
             raise ValueError(f"Unsupported engine: {config.get('engine')}")
         self._method = config['generation_strat']
@@ -35,6 +37,23 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
         data_df['seed'] = data_df[['text','explanation']].apply(lambda x: f'{x[0]}\n\n<Explanation>: {x[1]}',axis=1)
         return data_df['seed'].values.tolist()
     
+    def _prepare_prompt(self, random_seeds, topic):
+        """Formats the prompt template with dynamic seeds and topic."""
+        template = self.config["prompt_template"]
+
+        formatted_messages = [
+            {
+                "role": message["role"],
+                "content": [
+                    {"type": item["type"], "text": item["text"].format(*random_seeds, topic)}
+                    for item in message["content"]
+                ]
+            }
+            for message in template
+        ]
+
+        return formatted_messages
+    
     def execute(self):
 
         attack_type = self.config["attack_type"]
@@ -46,22 +65,21 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
         max_iterations = self.config["max_iterations"]
 
         topics = self.config["topics"].split(',')
-        template = self.config["prompt_template"]
 
         while (num_cases < expected_cases) & (num_iterations<=max_iterations):
             time.sleep(1)
             num_iterations +=1
             topic = random.choice(topics)
             random_seeds = random.sample(seed_prompts,self.config["n_cases"])
-            prompt = template.format(*random_seeds,topic)
+            prompt = self._prepare_prompt(random_seeds, topic)
             # print(prompt)
             text = self.model(prompt)
+            print(text)
             # text = self.model({"role": "user", "content": prompt})
             try:
                 match = re.search(r'<CASE>(.*?)<Explanation>', text, re.DOTALL)                
             except:
                 match = None
-            print(text)
             if match is not None:
                 num_cases +=1
                 content = match.group(1)

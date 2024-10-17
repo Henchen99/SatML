@@ -18,16 +18,14 @@ class OpenAi(LanguageModel):
     def _set_config(self):
         openai.api_key = self.apikey
 
-    def __call__(self, prompt):
+    def __call__(self, messages):
         # print()
-        # print(prompt)
-        # print()
-        # print(self.model)
+        # print(json.dumps(messages, indent=4))
         # print()
         try:
             response = openai.chat.completions.create(  
                 model=self.model,
-                messages=[{"role": "user", "content": prompt}],
+                messages=messages,
                 temperature=self.temperature,
                 max_tokens=self.max_tokens
             )
