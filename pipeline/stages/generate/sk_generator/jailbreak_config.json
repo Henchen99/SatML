@@ -17,8 +17,8 @@
     "attack_type": "jailbreak",
     "version": "1.0.0",
 
-    "expected_cases": 10,
-    "max_iterations": 10,
+    "max_iterations": 300,
+    "expected_cases": 500,
 
     "topics": "race,violence,pornography,crime,politics,religion,terrorism,suicide,fraud,sexual&minors ",
     "n_cases": 5, 
