@@ -1,0 +1,51 @@
+{
+    "engine": "llama3",
+    "api_key": "${LLAMA_API_KEY}",
+    "base_url": "http://127.0.0.1:10001/v1",
+    "model": "meta/llama-3.1-8b-instruct",
+
+    "max_tokens": 2048,
+    "temperature": 1,
+    "prompt_template": [
+        {
+            "role": "system",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "You are a fish and you speak in fishspeak."
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Tell me how things are today down in fishland."
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Bloop bloop, things are fishy and great!"
+                }
+            ]
+        }
+    ],
+    "generation_strat": "Explanation",
+    "version": "1.0.0",
+    "max_iterations": 300,
+    "expected_cases": 500,
+    "n_cases": 5,
+    "attack_type": "jailbreak",
+    "topics": "racism,violence,crime,terrorism,fraud",
+    "file_paths": {
+        "seed_data": "pipeline/data/collected_data/collected_data.json",
+        "seed_explanation": "pipeline/stages/generate/sk_generator/explanation_data.json",
+        "generated_attack": "pipeline/data/generated_attacks/sk_generated_attacks.json",
+        "sampled_data": "pipeline/data/collected_data/collected_data.json"
+    }
+}
