@@ -1,0 +1,10 @@
+# Environment configuration files
+.env
+.envrc
+
+# Compiled Python files
+*.py[cod]
+__pycache__/
+
+# Apple
+**/.DS_Store
