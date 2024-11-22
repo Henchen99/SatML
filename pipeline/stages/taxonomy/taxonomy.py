@@ -19,7 +19,7 @@ class AbstractTaxonomyStage(ABC):
         hashed_data = []
         for row in data:
             # check if id is already hashed
-            if len(str(row["SHA-256"])) == 64:
+            if len(str(row["seed_SHA-256"])) == 64:
                 hashed_data.append(row)
             else:
                 # Create a new SHA-256 hash object
@@ -38,7 +38,7 @@ class AbstractTaxonomyStage(ABC):
 
 
 
-class DummyTaxonomy(AbstractTaxonomyStage):
+class Taxonomy(AbstractTaxonomyStage):
     def __init__(self, config):
         self.config = config
 
@@ -54,5 +54,4 @@ class DummyTaxonomy(AbstractTaxonomyStage):
             with open('pipeline/data/collected_data/collected_data.json', 'w') as output_file:
                 json.dump(hashed_data, output_file, indent=4)
 
-        warnings.warn("Taxonomy stage not implemented", UserWarning)
         print("Skipping Taxonomy stage...")

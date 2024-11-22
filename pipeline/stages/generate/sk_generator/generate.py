@@ -7,6 +7,9 @@ import pandas as pd
 from language_models.azure_openai import AzureOpenAI
 from language_models.openai_model import OpenAi
 from language_models.llama3 import llama3
+# from ....language_models.azure_openai import AzureOpenAI
+# from ....language_models.openai_model import OpenAi
+# from ....language_models.llama3 import llama3
 import time
 
 class ExplanationBasedGenerator(AbstractGenerateStage):
@@ -33,9 +36,13 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
         prompts_df = pd.DataFrame(self._read_json(self.config["seed_data_fp"]))
         explanation_data_df = pd.DataFrame(self._read_json(self.config["seed_explanation_fp"]))
         
-        data_df = prompts_df.merge(explanation_data_df, left_on="SHA-256", right_on="id", how="inner")
+        data_df = prompts_df.merge(explanation_data_df, left_on="seed_SHA-256", right_on="id", how="inner")
         data_df['seed'] = data_df[['text','explanation']].apply(lambda x: f'{x[0]}\n\n<Explanation>: {x[1]}',axis=1)
-        return data_df['seed'].values.tolist()
+        
+        seeds = data_df['seed'].values.tolist()
+        seed_hashes = data_df['seed_SHA-256'].values.tolist()
+        
+        return seeds, seed_hashes
     
     def _prepare_prompt(self, random_seeds, topic):
         """Formats the prompt template with dynamic seeds and topic."""
@@ -57,7 +64,7 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
     def execute(self):
 
         attack_type = self.config["attack_type"]
-        seed_prompts = self._get_seed_data()
+        seed_prompts, seed_hashes = self._get_seed_data()
 
         num_cases = 0
         num_iterations = 0
@@ -70,9 +77,14 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
             time.sleep(1)
             num_iterations +=1
             topic = random.choice(topics)
-            random_seeds = random.sample(seed_prompts,self.config["n_cases"])
+            # random_seeds = random.sample(seed_prompts,self.config["n_cases"])
+            
+            random_indices = random.sample(range(len(seed_prompts)), self.config["n_cases"])
+            # Get both the sampled seed prompts and their hashes
+            random_seeds = [seed_prompts[i] for i in random_indices]
+            sampled_seed_hashes = [seed_hashes[i] for i in random_indices]
+            
             prompt = self._prepare_prompt(random_seeds, topic)
-            # print(prompt)
             text = self.model(prompt)
             print(text)
             # text = self.model({"role": "user", "content": prompt})
@@ -83,7 +95,7 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
             if match is not None:
                 num_cases +=1
                 content = match.group(1)
-                self.save_prompts_to_json([content], attack_type, self._method, self.version)
+                self.save_prompts_to_json([content], attack_type, self._method, self.version, self.model, [sampled_seed_hashes])
                 print("CONTENT")
                 print(content)
             print(f"Iteration: {num_iterations}, Number of Generated Cases: {num_cases}, Expected Cases: {expected_cases} ")

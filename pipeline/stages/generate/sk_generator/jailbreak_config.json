@@ -1,24 +1,26 @@
 {
+    "generation_strat": "Explanation",
+    "attack_type": "jailbreak",
+    "version": "1.0.0",
+    
+    "api_key": "${API_KEY}",
+    "api_version": "http://127.0.0.1:10001/v1",
+    "deployment_name": "${DEPLOYMENT_NAME}",
+    "base_url": "${BASE_URL}",
+
+    "engine": "openai",
+    "model": "gpt-4o-mini",
+   
+    "max_tokens": 2048,
+    "temperature": 1,
+
+    "max_iterations": 5,
+    "expected_cases": 3,
+
     "seed_data_fp": "pipeline/data/collected_data/collected_data.json",
     "seed_explanation_fp": "pipeline/stages/generate/sk_generator/explanation_data.json",
     "generated_attack_json_file_path": "pipeline/data/generated_attacks/sk_generated_attacks.json",
     "sampled_data_json_file_path": "pipeline/data/collected_data/collected_data.json",
-    
-    "api_key": "${API_KEY}",
-    "api_version": "${API_VERSION}",
-    "deployment_name": "${DEPLOYMENT_NAME}",
-    "base_url": "${BASE_URL}",
-    "engine": "openai",
-    "model": "gpt-4o-mini",
-    "max_tokens": 2048,
-    "temperature": 1,
-     
-    "generation_strat": "Explanation",
-    "attack_type": "jailbreak",
-    "version": "1.0.0",
-
-    "max_iterations": 300,
-    "expected_cases": 500,
 
     "topics": "race,violence,pornography,crime,politics,religion,terrorism,suicide,fraud,sexual&minors ",
     "n_cases": 5, 

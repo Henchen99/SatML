@@ -2,11 +2,11 @@
 
 ## Configuration Setup
 
-Before running the code, **each implemented version needs to set up their own configuration file**, `version_config.json`. This file contains settings specific to the version's environment and is required for the code to run correctly. 
+Before running the code, **each implemented generation method needs to set up their own configuration file**, `generationMethod_config.json`. This file contains settings specific to the version's environment and is required for the code to run correctly. 
 
 ### Format
 
-The `version_config.json` file should be in the following format:
+The `generationMethod_config.json` file should be in the following format:
 
 ```json
 {
@@ -16,14 +16,17 @@ The `version_config.json` file should be in the following format:
 }
 ```
 
-**Another config file is required to be set up in the root directory of the repository** This should contain the Open API key in order to run the pipeline.
+**In addition to setting up each config file, a .env file is required to be set up in the root directory of the repository** This should contain the API key(s), BASE_URL etc. in order to run the pipeline.
 
 ### Format
 
-The `config.json` file should be in the following format:
+The `.env` file should be in the following format and filled in where necessary:
 
 ```json
-{
-    "api_key": "YOUR_OPEN_API_KEY_HERE",
-}
+API_KEY="YOUR_KEY_HERE"
+TOGETHER_API_KEY="YOUR_KEY_HERE"
+LLAMA_API_KEY="YOUR_KEY_HERE"
+BASE_URL="YOUR_URL_HERE"
+API_VERSION="YOUR_API_VERSION_HERE"
+DEPLOYMENT_NAME="YOUR_DEPLOYMENT_NAME_HERE"
 ```

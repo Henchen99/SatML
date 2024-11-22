@@ -7,6 +7,7 @@ import importlib
 from dotenv import load_dotenv
 import os
 import sys
+import hashlib
 
 load_dotenv('pipeline/.env')
 
@@ -15,7 +16,7 @@ class AbstractGenerateStage:
         self.config = config
         self.api_key = os.getenv('API_KEY')
 
-    def save_prompts_to_json(self, prompts, attack_type, gen_strat, version):
+    def save_prompts_to_json(self, prompts, attack_type, gen_strat, version, model, seed_hashes):
         """
         Save the generated prompts to a JSON file in the required format.
 
@@ -24,7 +25,8 @@ class AbstractGenerateStage:
         - attack_type (str): Type of attack used to generate prompts
         - gen_strat (str): Generation strategy used to generate prompts
         - version (str): Version of current strategy used to generate prompts
-        
+        - model (str): Model used for generation
+        - seed_hashes (list): List of SHA-256 hashes of seed prompts
         """
         if os.path.exists(self.generated_attack_json_file_path):
             with open(self.generated_attack_json_file_path, mode='r') as file:
@@ -37,13 +39,18 @@ class AbstractGenerateStage:
 
         # Create new formatted prompts
         formatted_prompts = []
-        for prompt in prompts:
+        for prompt, seed_hash in zip(prompts, seed_hashes):
+            # Generate SHA-256 hash for the generated prompt
+            gen_hash = hashlib.sha256(prompt.encode()).hexdigest()
             formatted_prompts.append({
+                "gen_SHA-256": gen_hash,
+                "seed_SHA-256": seed_hash,
                 "prompt": prompt,
                 "attack_type": attack_type,
                 "generation_strat": gen_strat,
-                "version": version
-            })
+                "version": version,
+                "model": model
+        })
 
         existing_data.extend(formatted_prompts)
 
