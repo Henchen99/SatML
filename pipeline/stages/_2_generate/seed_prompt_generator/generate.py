@@ -1,0 +1,117 @@
+from pipeline.stages._2_generate.base_generate import AbstractGenerateStage
+from language_models.language_model_selection import LanguageModelFactory
+import os
+import json
+import re
+import random
+import copy
+
+class SeedPromptGenerator(AbstractGenerateStage):
+    def __init__(self, config):
+        super().__init__(config)
+        self.model = self.select_model()
+        self.attack_type = self.config['attack_type']
+        self.generation_strat = self.config['generation_strat']
+        self.version = self.config['version']
+        self.max_iterations = self.config['max_iterations']
+        self.expected_cases = self.config['expected_cases']
+        self.prompt_template = self.config['prompt_template']
+
+    def select_model(self):
+        """Select and initialize the language model based on the configuration."""
+        return LanguageModelFactory.create_model(self.config)
+
+    def read_data(self):
+        """Read data from the specified source."""
+        with open(self.sampled_data_json_file_path, 'r') as f:
+            return json.load(f)
+
+    def filter_data(self, data):
+        """Filter the data based on attack type."""
+        filtered_data = [item for item in data if item['attack_type'] == self.attack_type]
+        return filtered_data
+
+    def sample_data(self, filtered_data):
+        """Randomly sample data from the filtered dataset."""
+        try:
+            sampled_data = random.sample(filtered_data, 5)
+        except ValueError as e:
+            print(f"Error: {e}. Using the entire dataset.")
+            sampled_data = filtered_data
+        return sampled_data
+
+    def generate_prompts(self, sampled_data):
+        """Generate prompts using the selected model."""
+        seed_hashes = []
+
+        # Create a deep copy of the prompt_template to avoid modifying the original
+        updated_prompt_template = copy.deepcopy(self.prompt_template)
+
+        # Replace placeholders in the prompt template
+        for message in updated_prompt_template:
+            for content in message.get("content", []):
+                if "{SEED_TOKEN}" in content.get("text", ""):
+                    seed_token = os.urandom(15).hex()
+                    content["text"] = content["text"].replace("{SEED_TOKEN}", seed_token)
+                if "{PROMPT_EXAMPLES}" in content.get("text", ""):
+                    if len(sampled_data) < 5:
+                        current_sample = sampled_data.copy()
+                    else:
+                        current_sample = random.sample(sampled_data, 5)
+
+                    current_seed_hashes = [item["seed_SHA-256"] for item in current_sample]
+                    seed_hashes.extend(current_seed_hashes)
+
+                    # Prepare the replacement text for {PROMPT_EXAMPLES}
+                    prompt_examples = '\n\n'.join([f"<CASE>{item['text']}</CASE>" for item in current_sample])
+                    # Replace the placeholder with the unique prompt_examples
+                    content["text"] = content["text"].replace("{PROMPT_EXAMPLES}", prompt_examples)
+
+        # Generate prompts using the language model
+        response = self.model.generate(updated_prompt_template)
+
+        # Extract content between <CASE> tags from the response
+        prompts = response.strip().split('\n')[1:]
+
+        return prompts, seed_hashes
+
+    def clean_prompts(self, prompts):
+        """Clean the generated prompts by extracting text between <CASE></CASE> tags."""
+        cleaned_strings = []
+        for prompt in prompts:
+            matches = re.findall(r'<CASE>(.*?)<\/CASE>', prompt, re.DOTALL)
+            cleaned_strings.extend(matches)
+        return cleaned_strings
+
+    def execute(self):
+        """Execute the generation pipeline."""
+        num_cases = 0
+        num_iterations = 0
+        model_name = self.config['model']
+
+        while (num_cases <= self.expected_cases) and (num_iterations <= self.max_iterations):
+            num_iterations += 1
+            data = self.read_data()
+            filtered_data = self.filter_data(data)
+            sampled_data = self.sample_data(filtered_data)
+            prompts, seed_hashes = self.generate_prompts(sampled_data)
+
+            # Search for matches in each prompt string
+            matches = []
+            for prompt in prompts:
+                found_matches = re.findall(r'<CASE>(.*?)<\/CASE>', prompt, re.DOTALL)
+                matches.extend(found_matches)
+            num_cases += len(matches)
+            print(f"Iteration: {num_iterations}, Number of Generated Cases: {num_cases}, Expected Cases: {self.expected_cases}")
+
+            cleaned_prompts = self.clean_prompts(prompts)
+            self.save_prompts_to_json(
+                cleaned_prompts,
+                self.attack_type,
+                self.generation_strat,
+                self.version,
+                model_name,
+                seed_hashes  
+            )
+
+        print(f"\nPrompts generated by {self.generation_strat} v{self.version} have been successfully appended to the JSON file.")
