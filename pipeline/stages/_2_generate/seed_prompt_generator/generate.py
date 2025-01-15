@@ -32,7 +32,7 @@ class SeedPromptGenerator(AbstractGenerateStage):
         return filtered_data
 
     def sample_data(self, filtered_data):
-        """Randomly sample data from the filtered dataset."""
+        """Randomly sample 5 data items from the filtered dataset."""
         try:
             sampled_data = random.sample(filtered_data, 5)
         except ValueError as e:
@@ -40,43 +40,38 @@ class SeedPromptGenerator(AbstractGenerateStage):
             sampled_data = filtered_data
         return sampled_data
 
-    def generate_prompts(self, sampled_data):
-        """Generate prompts using the selected model."""
-        seed_hashes = []
+    def generate_prompts(self):
+        """
+        Generate one prompt based on a sampled list of 5 seed hashes.
 
-        # Create a deep copy of the prompt_template to avoid modifying the original
+        Returns:
+            tuple: A tuple containing the generated prompt and the list of 5 seed hashes.
+        """
+        # Step 1: Filter and sample data
+        filtered_data = self.filter_data(self.read_data())
+        sampled_data = self.sample_data(filtered_data)
+
+        # Step 2: Extract the seed hashes corresponding to the sampled data
+        seed_hashes = [item["seed_SHA-256"] for item in sampled_data]
+
+        # Step 3: Update prompt template with sampled data
         updated_prompt_template = copy.deepcopy(self.prompt_template)
-
-        # Replace placeholders in the prompt template
         for message in updated_prompt_template:
             for content in message.get("content", []):
-                if "{SEED_TOKEN}" in content.get("text", ""):
-                    seed_token = os.urandom(15).hex()
-                    content["text"] = content["text"].replace("{SEED_TOKEN}", seed_token)
-                if "{PROMPT_EXAMPLES}" in content.get("text", ""):
-                    if len(sampled_data) < 5:
-                        current_sample = sampled_data.copy()
-                    else:
-                        current_sample = random.sample(sampled_data, 5)
+                if content.get("text") == "{PROMPT_EXAMPLES}":
+                    # Replace placeholder with multiple <CASE> entries
+                    content["text"] = '\n\n'.join([f"<CASE>{item['text']}</CASE>" for item in sampled_data])
 
-                    current_seed_hashes = [item["seed_SHA-256"] for item in current_sample]
-                    seed_hashes.extend(current_seed_hashes)
-
-                    # Prepare the replacement text for {PROMPT_EXAMPLES}
-                    prompt_examples = '\n\n'.join([f"<CASE>{item['text']}</CASE>" for item in current_sample])
-                    # Replace the placeholder with the unique prompt_examples
-                    content["text"] = content["text"].replace("{PROMPT_EXAMPLES}", prompt_examples)
-
-        # Generate prompts using the language model
+        # Step 4: Generate prompt using the language model
         response = self.model.generate(updated_prompt_template)
+        print(f"Generated Content: {response}")
 
-        # Extract content between <CASE> tags from the response
-        prompts = response.strip().split('\n')[1:]
-
+        # Step 5: Extract prompts from the response
+        prompts = response.strip().split('\n')[1:]  # Assuming the first line is not a prompt
         return prompts, seed_hashes
 
     def clean_prompts(self, prompts):
-        """Clean the generated prompts by extracting text between <CASE></CASE> tags."""
+        """Extract text between <CASE></CASE> tags."""
         cleaned_strings = []
         for prompt in prompts:
             matches = re.findall(r'<CASE>(.*?)<\/CASE>', prompt, re.DOTALL)
@@ -89,29 +84,47 @@ class SeedPromptGenerator(AbstractGenerateStage):
         num_iterations = 0
         model_name = self.config['model']
 
-        while (num_cases <= self.expected_cases) and (num_iterations <= self.max_iterations):
+        while (num_cases <= self.expected_cases) and (num_iterations < self.max_iterations):
             num_iterations += 1
-            data = self.read_data()
-            filtered_data = self.filter_data(data)
-            sampled_data = self.sample_data(filtered_data)
-            prompts, seed_hashes = self.generate_prompts(sampled_data)
 
-            # Search for matches in each prompt string
+            # Generate prompts and retrieve seed hashes
+            prompts, seed_hashes = self.generate_prompts()
+
+            # Debug: Verify the number of prompts and seed hashes
+            print(f"Iteration {num_iterations}: Generated {len(prompts)} prompts.")
+            for idx, prompt in enumerate(prompts, start=1):
+                print(f"  Prompt {idx}: {prompt}")
+
+            # Extract matches from each prompt
             matches = []
             for prompt in prompts:
                 found_matches = re.findall(r'<CASE>(.*?)<\/CASE>', prompt, re.DOTALL)
                 matches.extend(found_matches)
             num_cases += len(matches)
-            print(f"Iteration: {num_iterations}, Number of Generated Cases: {num_cases}, Expected Cases: {self.expected_cases}")
+            print(f"  Number of Generated Cases: {num_cases}, Expected Cases: {self.expected_cases}")
 
+            # Clean prompts by extracting <CASE> entries
             cleaned_prompts = self.clean_prompts(prompts)
+
+            # Debug: Verify cleaned prompts
+            print(f"  Cleaned Prompts Count: {len(cleaned_prompts)}")
+            for idx, prompt in enumerate(cleaned_prompts, start=1):
+                print(f"    Cleaned Prompt {idx}: {prompt}")
+
+            # Ensure that the number of cleaned prompts matches the number of seed hash lists
+            # Each cleaned prompt is associated with the same list of 5 seed hashes
+            seed_hashes_list = [seed_hashes] * len(cleaned_prompts)
+            assert len(cleaned_prompts) == len(seed_hashes_list), \
+                f"Mismatch between number of cleaned prompts ({len(cleaned_prompts)}) and seed hashes ({len(seed_hashes_list)})."
+
+            # Save prompts to JSON
             self.save_prompts_to_json(
                 cleaned_prompts,
                 self.attack_type,
                 self.generation_strat,
                 self.version,
                 model_name,
-                seed_hashes  
+                seed_hashes_list  # Each prompt is associated with the same list of 5 seed hashes
             )
 
         print(f"\nPrompts generated by {self.generation_strat} v{self.version} have been successfully appended to the JSON file.")
