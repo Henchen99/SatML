@@ -52,6 +52,7 @@ class Pipeline:
         try:
             with open(self.config_path, 'r') as f:
                 config = json.load(f)
+            self.config = config
             # logger.debug(f"Pipeline configuration loaded: {config}")
         except Exception as e:
             logger.error(f"Failed to load configuration: {e}")
@@ -177,16 +178,16 @@ class Pipeline:
     def merge_generated_attacks(self):
         """Merge all generated attacks into a combined JSON file."""
         try:
+            logger.info("Starting merge of generated attacks.")
             AbstractGenerateStage.merge_gen_attacks(self.config)
             logger.info("Successfully merged all generated attacks.")
         except Exception as e:
             logger.error(f"Failed to merge generated attacks: {e}")
             logger.debug(traceback.format_exc())  # Log full traceback
 
-
-# If you have a separate run script, ensure it initializes and runs the Pipeline
 if __name__ == "__main__":
     pipeline = Pipeline()
     pipeline.run()
-    # Optionally, merge attacks if not handled within generate stages
+    logger.info("Running merge_generated_attacks method.")
     pipeline.merge_generated_attacks()
+    logger.info("Finished running merge_generated_attacks method.")

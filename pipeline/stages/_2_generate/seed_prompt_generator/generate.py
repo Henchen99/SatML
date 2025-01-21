@@ -108,8 +108,8 @@ class SeedPromptGenerator(AbstractGenerateStage):
 
             # Debug: Verify cleaned prompts
             print(f"  Cleaned Prompts Count: {len(cleaned_prompts)}")
-            for idx, prompt in enumerate(cleaned_prompts, start=1):
-                print(f"    Cleaned Prompt {idx}: {prompt}")
+            # for idx, prompt in enumerate(cleaned_prompts, start=1):
+            #     print(f"    Cleaned Prompt {idx}: {prompt}")
 
             # Ensure that the number of cleaned prompts matches the number of seed hash lists
             # Each cleaned prompt is associated with the same list of 5 seed hashes
