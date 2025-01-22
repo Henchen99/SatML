@@ -19,6 +19,8 @@
         
             "max_iterations": 5,
             "expected_cases": 3,
+
+            "prompt_retrieval_size": 5,
         
             "sampled_data_path": "data/1_collected_data/collected_data.json",
             "generated_attacks_path": "data/3_generated_attacks/combined_generated_attacks.json",
@@ -35,17 +37,17 @@
         },
 
         "seed_prompt_generator": {
-            "enabled": true,
+            "enabled": false,
             "config_path": "pipeline/stages/_2_generate/seed_prompt_generator/seed_prompt_config.json"
         },
 
         "iterative_prompt_generator": {
-            "enabled": false,
+            "enabled": true,
             "config_path": "pipeline/stages/_2_generate/iterative_prompt_generator/iterative_prompt_config.json"
         },
 
         "explanation_generator": {
-            "enabled": false,
+            "enabled": false ,
             "config_path": "pipeline/stages/_2_generate/explanation_generator/explanation_config.json"
         } 
     },

@@ -16,6 +16,7 @@ class SeedPromptGenerator(AbstractGenerateStage):
         self.max_iterations = self.config['max_iterations']
         self.expected_cases = self.config['expected_cases']
         self.prompt_template = self.config['prompt_template']
+        self.prompt_retrieval_size = self.config.get('prompt_retrieval_size', 5)
 
     def select_model(self):
         """Select and initialize the language model based on the configuration."""
@@ -32,12 +33,14 @@ class SeedPromptGenerator(AbstractGenerateStage):
         return filtered_data
 
     def sample_data(self, filtered_data):
-        """Randomly sample 5 data items from the filtered dataset."""
-        try:
-            sampled_data = random.sample(filtered_data, 5)
-        except ValueError as e:
-            print(f"Error: {e}. Using the entire dataset.")
+        """Randomly sample a specified number of data items from the filtered dataset."""
+        sample_size = self.prompt_retrieval_size
+        available = len(filtered_data)
+        if available < sample_size:
             sampled_data = filtered_data
+        else:
+            sampled_data = random.sample(filtered_data, sample_size)
+            print(f"Sampled {len(sampled_data)} data items.")
         return sampled_data
 
     def generate_prompts(self):
@@ -107,7 +110,7 @@ class SeedPromptGenerator(AbstractGenerateStage):
             cleaned_prompts = self.clean_prompts(prompts)
 
             # Debug: Verify cleaned prompts
-            print(f"  Cleaned Prompts Count: {len(cleaned_prompts)}")
+            print(f"\n\nCleaned Prompts Count: {len(cleaned_prompts)}")
             # for idx, prompt in enumerate(cleaned_prompts, start=1):
             #     print(f"    Cleaned Prompt {idx}: {prompt}")
 

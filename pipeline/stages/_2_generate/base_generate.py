@@ -89,47 +89,6 @@ class AbstractGenerateStage(ABC):
         ############################## THIS SHOULD BE FILLED IN
         pass
 
-    # @classmethod
-    # def run(cls, config):
-    #     """
-    #     Runs all the generate classes by dynamically loading them based on the 'generate' key in the main config.
-    #     """
-    #     generate_stages = config['generate']
-
-    #     # Iterate over the generate stages specified in the config
-    #     for stage_name, stage_info in generate_stages.items():
-    #         if stage_name in ['enabled', 'default_config']:
-    #             continue  # Skip non-stage entries
-
-    #         if not stage_info.get('enabled', False):
-    #             continue  # Skip disabled stages
-
-    #         stage_config_path = stage_info.get('config_path')
-    #         if not stage_config_path:
-    #             raise ValueError(f"Missing 'config_path' for generate stage '{stage_name}'.")
-
-    #         # Load the stage config from the specified file
-    #         with open(stage_config_path, 'r') as f:
-    #             stage_config = json.load(f)
-
-    #         # Dynamically import the stage module
-    #         stage_module_name = f"pipeline.stages._2_generate.{stage_name}.generate"
-    #         stage_module = importlib.import_module(stage_module_name)
-
-    #         # Find the stage class in the module
-    #         stage_class = None
-    #         for name, obj in inspect.getmembers(stage_module):
-    #             if inspect.isclass(obj) and issubclass(obj, AbstractGenerateStage) and obj != AbstractGenerateStage:
-    #                 stage_class = obj
-    #                 break
-
-    #         if stage_class is None:
-    #             raise ImportError(f"No valid class found in module {stage_module_name} that inherits from AbstractGenerateStage.")
-
-    #         # Initialize and execute the stage
-    #         stage_instance = stage_class(stage_config)
-    #         stage_instance.execute()
-
     @classmethod
     def merge_gen_attacks(cls, config):
         """
