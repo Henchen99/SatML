@@ -1,0 +1,5 @@
+{
+    "candidate_synthetic_attack_path": "data/3_generated_attacks/combined_generated_attacks.json",
+    "target_llm_response_path": "data/4_generated_efficacy/prompt_response_pairs.json",
+    "evaluated_attacks_path": "data/4_generated_efficacy/evaluated_attacks.json"
+}
