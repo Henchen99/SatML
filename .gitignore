@@ -8,3 +8,6 @@ __pycache__/
 
 # Apple
 **/.DS_Store
+
+models/*
+!models/.gitkeep

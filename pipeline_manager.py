@@ -154,7 +154,7 @@ class Pipeline:
 
         # Classifier Stage
         if config.get('classifier', {}).get('enabled', False):
-            classifier_config = config['classifier']['config_path']
+            classifier_config = config['classifier']
             try:
                 classifier_stage = ClassifierStage(config={'config_path': classifier_config})
                 self.stages.append(classifier_stage)

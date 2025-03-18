@@ -1,10 +1,15 @@
 from abc import ABC, abstractmethod
+import os
+import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class AbstractClassifierStage(ABC):
     def __init__(self, config):
         self.config = config
 
     @abstractmethod
-    def run(self):
+    def execute(self):
         """Execute the classifier stage."""
         pass

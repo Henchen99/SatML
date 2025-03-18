@@ -5,9 +5,9 @@ import pandas as pd
 import gc
 
 import torch
-print("PyTorch version:", torch.__version__)
-print("CUDA version:", torch.version.cuda)
-print("Is CUDA available?", torch.cuda.is_available())
+# print("PyTorch version:", torch.__version__)
+# print("CUDA version:", torch.version.cuda)
+# print("Is CUDA available?", torch.cuda.is_available())
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
@@ -187,7 +187,7 @@ class EvaluateStage(AbstractEvaluateStage):
         Executes the evaluation stage by delegating to the target model evaluation.
         """
         print("Running Evaluate Stage. Delegating to TargetModelEvaluateStage.")
-        # self.target_model_stage.execute()
+        self.target_model_stage.execute()
         print("Running Evaluate Stage. Prompt response finished")
 
         target_response_path = self.target_model_stage.output_path

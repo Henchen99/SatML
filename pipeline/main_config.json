@@ -17,8 +17,8 @@
             "max_tokens": 4096,
             "temperature": 1,
         
-            "max_iterations": 5,
-            "expected_cases": 3,
+            "max_iterations": 20,
+            "expected_cases": 10,
 
             "prompt_retrieval_size": 5,
         
@@ -37,7 +37,7 @@
         },
 
         "seed_prompt_generator": {
-            "enabled": false,
+            "enabled": true,
             "config_path": "pipeline/stages/_2_generate/seed_prompt_generator/seed_prompt_config.json"
         },
 
@@ -53,12 +53,14 @@
     },
 
     "evaluator": {
-        "enabled": true,
+        "enabled": false,
         "config_path": "pipeline/stages/_3_evaluate/evaluate_config.json"
     },
 
     "classifier": {
-        "enabled": false,
+        "enabled": true,
+        "maliciousness_threshold": 1,
+        "include_hard_negative": false,
         "config_path": "pipeline/stages/_4_classifier/classifier_config.json"
     }
 }
