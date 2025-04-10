@@ -1,8 +1,0 @@
-{
-    "evaluated_candidate_synthetic_attacks": "data/4_generated_efficacy/evaluated_attacks.json",
-    "refined_synthetic_attacks": "data/5_classifier_dataset/refined_synthetic_attacks.json",
-    "refined_synthetic_attacks_train": "data/5_classifier_dataset/refined_synthetic_attacks_train.csv",
-    "refined_synthetic_attacks_val": "data/5_classifier_dataset/refined_synthetic_attacks_val.csv",
-    "refined_synthetic_attacks_test": "data/5_classifier_dataset/refined_synthetic_attacks_test.csv",
-    "benign_pool": "data/5_classifier_dataset/benign_prompts.csv"
-}

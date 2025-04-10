@@ -1,9 +1,7 @@
-# classifier/filter_data.py
-
 import json
-from .base_classifier import AbstractClassifierStage
+from .base_data_refinement import AbstractDataRefinementStage
 
-class DataFilterStage(AbstractClassifierStage):
+class DataFilterStage(AbstractDataRefinementStage):
     def __init__(self, input_path, output_path, criteria):
         self.input_path = input_path
         self.output_path = output_path

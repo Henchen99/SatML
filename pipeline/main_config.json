@@ -10,21 +10,15 @@
             "generation_strat": "Default",
             "attack_type": "jailbreak",
             "version": "1.0.0",
-            
             "model": "gpt-4o-mini",
             "engine": "openai",
-        
             "max_tokens": 4096,
             "temperature": 1,
-        
             "max_iterations": 20,
             "expected_cases": 10,
-
             "prompt_retrieval_size": 5,
-        
             "sampled_data_path": "data/1_collected_data/collected_data.json",
             "generated_attacks_path": "data/3_generated_attacks/combined_generated_attacks.json",
-
             "prompt_template":{
                 "role": "system",
                 "content": [
@@ -57,10 +51,42 @@
         "config_path": "pipeline/stages/_3_evaluate/evaluate_config.json"
     },
 
-    "classifier": {
-        "enabled": true,
+    "data_refinement": {
+        "enabled": false,
         "maliciousness_threshold": 1,
-        "include_hard_negative": false,
-        "config_path": "pipeline/stages/_4_classifier/classifier_config.json"
+
+        "synonym_replacement_enabled": false,
+        "paraphrasing_enabled": false,
+        "casing_enabled": true,
+        "separator_enabled": false,
+        "punctuation_enabled": true,
+        "mutation_ratio": 0.1,
+        "mutation_method": "replacement",
+
+        "prompt_reformatting_enabled": true,
+        "prompt_format": "plaintext",
+
+        "config_path": "pipeline/stages/_4_data_refinement/data_refinement_config.json"
+    },
+
+    "classifier": {
+        "enabled": false,
+        "training_hyperparams": {
+            "learning_rate": 0.001,
+            "optimizer": "adam",
+            "loss_function": "binary_crossentropy",
+            "num_train_epochs": 10,
+            "per_device_train_batch_size":2,
+            "per_device_eval_batch_size":2,
+            "weight_decay":0.01,
+            "validation_split": 0.2
+        },
+        "config_path": "pipeline/stages/_5_classifier/classifier_config.json"
+    },
+
+    "benchmark": {
+        "enabled": true,
+        "model": "models/Prompt-Guard-86M",
+        "config_path": "pipeline/stages/_6_benchmark/benchmark_config.json"
     }
 }

@@ -1,9 +1,9 @@
 import json
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from .base_classifier import AbstractClassifierStage
+from .base_data_refinement import AbstractDataRefinementStage
 
-class DataSplitStage(AbstractClassifierStage):
+class DataSplitStage(AbstractDataRefinementStage):
     def __init__(self, config):
         self.config = config
         self.refined_path = self.config["refined_synthetic_attacks"]
@@ -27,11 +27,11 @@ class DataSplitStage(AbstractClassifierStage):
                     records.append({"prompt": prompt_text, "label": 1})
             
             df_refined = pd.DataFrame(records)
-            print("Refined data records:", len(df_refined))
+            print("Total refined data records:", len(df_refined))
             
-            # Split the refined data into train (80%) and test (20%).
+            # Split the refined data into train (60%) and test (40%).
             train_df, temp_df = train_test_split(df_refined, test_size=0.4, random_state=42)
-            # Then, split the temp set equally into validation (20%) and test (20%).
+            # Then, split the temp set equally into validation (50%) and test (50%).
             val_df, test_df = train_test_split(temp_df, test_size=0.5, random_state=42)
 
             print("Train refined records:", len(train_df))
@@ -65,10 +65,11 @@ class DataSplitStage(AbstractClassifierStage):
             final_val.to_csv(self.val_csv, index=False)
             final_test.to_csv(self.test_csv, index=False)
             
-            print("Data splitting and benign augmentation complete.")
-            print("Train set saved to:", self.train_csv, "with", len(final_train), "records.")
-            print("Validation set saved to:", self.val_csv, "with", len(final_val), "records.")
-            print("Test set saved to:", self.test_csv, "with", len(final_test), "records.")
+            print("### Data splitting and benign augmentation complete ###")
+            print("Train set saved to:", self.train_csv, "with", len(final_train), "records")
+            print("Validation set saved to:", self.val_csv, "with", len(final_val), "records")
+            print("Test set saved to:", self.test_csv, "with", len(final_test), "records")
+            print("\n")
             
             return final_train, final_val, final_test
         

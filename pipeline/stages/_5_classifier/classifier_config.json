@@ -1,0 +1,6 @@
+{
+    "refined_synthetic_attacks": "data/6_classifier_dataset/refined_synthetic_attacks.json",
+    "refined_synthetic_attacks_train": "data/6_classifier_dataset/refined_synthetic_attacks_train.csv",
+    "refined_synthetic_attacks_val": "data/6_classifier_dataset/refined_synthetic_attacks_val.csv",
+    "refined_synthetic_attacks_test": "data/6_classifier_dataset/refined_synthetic_attacks_test.csv"
+}

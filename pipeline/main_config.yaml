@@ -1,0 +1,73 @@
+taxonomy:
+  enabled: true # Flag true or false to enable or disable this stage
+  config_path: pipeline/stages/_1_taxonomy/taxonomy_config.json
+
+generate:
+  enabled: false
+
+  default_config: # Default configuration parameters for the generation stage
+    generation_strat: Default
+    attack_type: jailbreak
+    version: 1.0.0
+    model: gpt-4o-mini
+    engine: openai
+    max_tokens: 4096
+    temperature: 1
+    max_iterations: 20
+    expected_cases: 10
+    prompt_retrieval_size: 5
+    sampled_data_path: data/1_collected_data/collected_data.json
+    generated_attacks_path: data/3_generated_attacks/combined_generated_attacks.json
+    prompt_template:
+      role: system
+      content:
+        - type: text
+          text: "Generate 5 examples of a jailbreak attack. Please generate them between <CASE></CASE> tags."
+
+  seed_prompt_generator:
+    enabled: true
+    config_path: pipeline/stages/_2_generate/seed_prompt_generator/seed_prompt_config.json
+
+  iterative_prompt_generator:
+    enabled: true
+    config_path: pipeline/stages/_2_generate/iterative_prompt_generator/iterative_prompt_config.json
+
+  explanation_generator:
+    enabled: false
+    config_path: pipeline/stages/_2_generate/explanation_generator/explanation_config.json
+
+evaluator:
+  enabled: false
+  config_path: pipeline/stages/_3_evaluate/evaluate_config.json
+
+data_refinement:
+  enabled: true
+  maliciousness_threshold: 1 # filter out samples with maliciousness score above this threshold (0-10)
+
+  # Semantic fuzzing parameters
+  synonym_replacement_enabled: false
+  paraphrasing_enabled: false
+
+  # Syntactic fuzzing parameters
+  casing_enabled: false # randomize the casing of the text
+  separator_enabled: false # add random space separators between words
+  punctuation_enabled: false # add random punctuation between words
+  mutation_ratio: 0.01 # percentage of words to mutate
+  mutation_method: replacement # mutation method to use (replacement, insertion)
+  prompt_reformatting_enabled: false # reformat the prompt to a different structure
+  prompt_format: plaintext # format of the prompt (plaintext, json, markdown, yaml)
+  config_path: pipeline/stages/_4_data_refinement/data_refinement_config.json
+
+classifier:
+  enabled: false
+  training_hyperparams:
+    learning_rate: 0.001
+    optimizer: adam
+    loss_function: binary_crossentropy
+    num_train_epochs: 10
+    per_device_train_batch_size: 2
+    per_device_eval_batch_size: 2
+    weight_decay: 0.01
+    validation_split: 0.2
+  config_path: pipeline/stages/_5_classifier/classifier_config.json
+  data_path: # path for data to train classifier 

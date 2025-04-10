@@ -17,7 +17,9 @@ if project_root not in sys.path:
 from pipeline.stages._1_taxonomy.taxonomy import TaxonomyStage
 from pipeline.stages._2_generate.base_generate import AbstractGenerateStage
 from pipeline.stages._3_evaluate.evaluate import EvaluateStage
-from pipeline.stages._4_classifier.classifier import ClassifierStage
+from pipeline.stages._4_data_refinement.data_refining import DataRefinementStage
+from pipeline.stages._5_classifier.classifier import ClassifierStage
+from pipeline.stages._6_benchmark.benchmark import BenchmarkStage
 
 # Configure logging to include DEBUG level and format tracebacks
 logging.basicConfig(
@@ -152,6 +154,18 @@ class Pipeline:
                 logger.error(f"Failed to initialize Evaluate Stage: {e}")
                 logger.debug(traceback.format_exc())  # Log full traceback
 
+        # Data Refinement Stage
+        if config.get('data_refinement', {}).get('enabled', False):
+            data_refinement_config = config['data_refinement']
+            try:
+                data_refinement_stage = DataRefinementStage(config={'config_path': data_refinement_config})
+                self.stages.append(data_refinement_stage)
+                logger.info("#### Data Refinement Stage enabled and added to pipeline ####")
+            except Exception as e:
+                logger.error(f"Failed to initialize Data Refinement Stage: {e}")
+                logger.debug(traceback.format_exc())
+
+
         # Classifier Stage
         if config.get('classifier', {}).get('enabled', False):
             classifier_config = config['classifier']
@@ -161,6 +175,17 @@ class Pipeline:
                 logger.info("#### Classifier Stage enabled and added to pipeline #####")
             except Exception as e:
                 logger.error(f"Failed to initialize Classifier Stage: {e}")
+                logger.debug(traceback.format_exc())  # Log full traceback
+
+        # Benchmark Stage
+        if config.get('benchmark', {}).get('enabled', False):
+            benchmark_config = config['benchmark']
+            try:
+                benchmark_stage = BenchmarkStage(config=benchmark_config)
+                self.stages.append(benchmark_stage)
+                logger.info("#### Benchmark Stage enabled and added to pipeline #####")
+            except Exception as e:
+                logger.error(f"Failed to initialize Benchmark Stage: {e}")
                 logger.debug(traceback.format_exc())  # Log full traceback
 
     def run(self):
