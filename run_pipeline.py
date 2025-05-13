@@ -2,7 +2,7 @@
 from pipeline_manager import Pipeline
 
 def main():
-    pipeline = Pipeline(config_path='pipeline/main_config.json')
+    pipeline = Pipeline(config_path='pipeline/main_config.yaml')
     pipeline.run()
     pipeline.merge_generated_attacks()
 

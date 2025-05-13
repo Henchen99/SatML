@@ -86,7 +86,7 @@
 
     "benchmark": {
         "enabled": true,
-        "model": "models/Prompt-Guard-86M",
+        "model": "meta-llama/Prompt-Guard-86M",
         "config_path": "pipeline/stages/_6_benchmark/benchmark_config.json"
     }
 }

@@ -10,7 +10,7 @@ class SeedPromptGenerator(AbstractGenerateStage):
     def __init__(self, config):
         super().__init__(config)
         self.model = self.select_model()
-        self.attack_type = self.config['attack_type']
+        self.attack_type = self.config['sampled_attack_type']
         self.generation_strat = self.config['generation_strat']
         self.version = self.config['version']
         self.max_iterations = self.config['max_iterations']

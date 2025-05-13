@@ -3,6 +3,7 @@
 import sys
 import os
 import json
+import yaml
 import logging
 import importlib
 import inspect
@@ -33,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 
 class Pipeline:
-    def __init__(self, config_path='pipeline/main_config.json'):
+    def __init__(self, config_path='pipeline/main_config.yaml'):
         self.config_path = config_path
         self.stages = []
         # self.print_sys_path()  # Print sys.path for debugging
@@ -53,8 +54,11 @@ class Pipeline:
         logger.info(f"Loading pipeline configuration from {self.config_path}")
         try:
             with open(self.config_path, 'r') as f:
-                config = json.load(f)
-            self.config = config
+                if self.config_path.endswith(".yaml") or self.config_path.endswith(".yml"):
+                    config = yaml.safe_load(f)
+                else:
+                    config = json.load(f)  # fallback in case user still uses JSON
+                self.config = config
             # logger.debug(f"Pipeline configuration loaded: {config}")
         except Exception as e:
             logger.error(f"Failed to load configuration: {e}")
@@ -109,10 +113,13 @@ class Pipeline:
                         stage_stage_config = json.load(f)
 
                     # Merge main generate's default_config with stage's stage_config
-                    combined_config = {
-                        'default_config': generate_config.get('default_config', {}),
-                        'stage_config': stage_stage_config
-                    }
+                    # combined_config = {
+                    #     'default_config': generate_config.get('default_config', {}),
+                    #     'stage_config': stage_stage_config
+                    # }
+                    combined_config = generate_config.get('default_config', {}).copy()
+                    combined_config.update(stage_stage_config)
+                    # logging.info(f"combined config setup: {combined_config}")
 
                     module_path = f"pipeline.stages._2_generate.{stage_name}.generate"
                     logger.info(f"Attempting to import module: {module_path}")

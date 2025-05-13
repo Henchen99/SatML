@@ -15,7 +15,7 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
         self.model = self.select_model()
         # Initialize other attributes from self.config
         self._method = self.config['generation_strat']
-        self.generation_strat = self.config['attack_type']
+        self.generation_strat = self.config['generation_strat']
         self.version = self.config['version']
         self.seed_data_fp = self.config["seed_data_path"]
         self.seed_explanation_fp = self.config["seed_explanation_path"]
@@ -122,7 +122,7 @@ class ExplanationBasedGenerator(AbstractGenerateStage):
 
     def execute(self):
         """Execute the generation pipeline."""
-        attack_type = self.config["attack_type"]
+        attack_type = self.config["sampled_attack_type"]
         seeds, seed_hashes = self.read_data()
         seeds, seed_hashes = self.filter_data((seeds, seed_hashes))
         model_name = self.config.get('model', 'UnknownModel')

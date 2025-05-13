@@ -4,6 +4,7 @@ from .data_fuzz import DataFuzzificationStage
 from .data_split import DataSplitStage
 
 import json
+import yaml
 from dotenv import load_dotenv
 import os
 
@@ -21,8 +22,11 @@ class DataRefinementStage(AbstractDataRefinementStage):
             
             config_path_value = outer_config.get('config_path')
             
-            with open(config_path_value, 'r') as f:
-                file_config = json.load(f)
+            with open(config_path_value, "r") as f:
+                if config_path_value.endswith(".yaml") or config_path_value.endswith(".yml"):
+                    file_config = yaml.safe_load(f)
+                else:
+                    file_config = json.load(f)
             
             merged_config = {**file_config, **self.config}
             # print("Merged Config:", merged_config)

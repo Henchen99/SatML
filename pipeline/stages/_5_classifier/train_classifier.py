@@ -3,6 +3,10 @@ import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from datasets import Dataset
 import os
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class ClassifierTrainer:
     def __init__(self, model_name, output_dir, train_df, val_df, hf_token=None):
@@ -31,6 +35,7 @@ class ClassifierTrainer:
             login(self.hf_token)
         
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        logger.info("Using device: %s", device)
         
         # Load tokenizer and model.
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)

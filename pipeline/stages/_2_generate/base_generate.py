@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 
 class AbstractGenerateStage(ABC):
     def __init__(self, config):
-        self.config = self.merge_configs(config)
+        self.config = config # self.merge_configs(config)
         self.api_key = os.getenv('API_KEY')
         self.generated_attack_json_file_path = self.config.get('generated_attacks_path')
         self.sampled_data_json_file_path = self.config.get('sampled_data_path')

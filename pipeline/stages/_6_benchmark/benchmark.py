@@ -2,6 +2,7 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 import pandas as pd
 import os
 import json
+import yaml
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
@@ -15,7 +16,10 @@ class BenchmarkStage(AbstractBenchmarkStage):
         self.model_path = config.get("model")
         self.config_path = config.get("config_path")
         with open(self.config_path, 'r') as f:
-            self.benchmark_config = json.load(f)
+            if self.config_path.endswith(".yaml") or self.config_path.endswith(".yml"):
+                self.benchmark_config = yaml.safe_load(f)
+            else:
+                self.benchmark_config = json.load(f)
 
     def execute(self):
         # Load test dataset

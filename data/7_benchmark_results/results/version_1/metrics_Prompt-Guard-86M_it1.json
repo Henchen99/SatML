@@ -1,0 +1,22 @@
+{
+    "Jailbreak": {
+        "accuracy": 0.74,
+        "f1_score": 0.52,
+        "false positive rate": 0.28
+    },
+    "fuzzification-casing-replacement": {
+        "accuracy": 0.62,
+        "f1_score": 0.74,
+        "false positive rate": 0.37
+    },
+    "fuzzification-synonym-paraphrasing": {
+        "accuracy": 0.89,
+        "f1_score": 0.74,
+        "false positive rate": 0.17
+    },
+    "aggregate": {
+        "accuracy": 0.78,
+        "f1_score": 0.74,
+        "false positive rate": 0.21
+    }
+}

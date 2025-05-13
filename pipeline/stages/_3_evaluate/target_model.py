@@ -1,5 +1,6 @@
 import os
 import json
+import yaml
 import pandas as pd
 from openai import OpenAI
 from pipeline.stages._3_evaluate.base_evaluate import AbstractEvaluateStage
@@ -7,7 +8,10 @@ from pipeline.stages._3_evaluate.base_evaluate import AbstractEvaluateStage
 class TargetModelEvaluateStage(AbstractEvaluateStage):
     def __init__(self, evaluate_config_path):
         with open(evaluate_config_path, "r") as f:
-            config = json.load(f)
+            if evaluate_config_path.endswith(".yaml") or evaluate_config_path.endswith(".yml"):
+                config = yaml.safe_load(f)
+            else:
+                config = json.load(f)
         super().__init__(config)
         self.client = OpenAI(api_key=self.api_key)
         self.input_data_path = self.config.get("candidate_synthetic_attack_path")

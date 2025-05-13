@@ -12,8 +12,9 @@ logger = logging.getLogger(__name__)
 class IterativePromptGenerator(AbstractGenerateStage):
     def __init__(self, config):
         super().__init__(config)
+        # logger.info(f"config used: {config}")
         self.model = self.select_model()
-        self.attack_type = self.config['attack_type']
+        self.attack_type = self.config['sampled_attack_type']
         self.generation_strat = self.config['generation_strat']
         self.version = self.config['version']
         self.max_iterations = self.config['max_iterations']
@@ -39,8 +40,15 @@ class IterativePromptGenerator(AbstractGenerateStage):
 
     def filter_data(self, data):
         """Filter the data based on attack type."""
-        filtered_data = [item for item in data if item.get('attack_type') == self.attack_type]
-        logger.debug(f"Filtered data (attack_type={self.attack_type}): {len(filtered_data)} items")
+        # filtered_data = [item for item in data if item.get('attack_type') == self.attack_type]
+        # logger.debug(f"Filtered data (attack_type={self.attack_type}): {len(filtered_data)} items")
+        # return filtered_data
+        attack_types = self.attack_type
+        if not isinstance(attack_types, list):
+            attack_types = [attack_types]
+
+        filtered_data = [item for item in data if item.get('attack_type') in attack_types]
+        logger.debug(f"Filtered data (attack_type in {attack_types}): {len(filtered_data)} items")
         return filtered_data
 
     def sample_data(self, filtered_data):
