@@ -10,6 +10,10 @@ import inspect
 from pathlib import Path
 import traceback  # Import traceback module for detailed error information
 
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("openai").setLevel(logging.WARNING)
+
 # Add the parent directory to sys.path to ensure 'pipeline' is discoverable
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
@@ -71,7 +75,7 @@ class Pipeline:
             try:
                 taxonomy_stage = TaxonomyStage(config={'config_path': taxonomy_config})
                 self.stages.append(taxonomy_stage)
-                logger.info("#### Taxonomy Stage enabled and added to pipeline #### ")
+                logger.info("\n#### Taxonomy Stage enabled and added to pipeline #### ")
             except Exception as e:
                 logger.error(f"Failed to initialize Taxonomy Stage: {e}")
                 logger.debug(traceback.format_exc())  # Log full traceback
@@ -139,7 +143,7 @@ class Pipeline:
                     # Initialize stage with combined_config
                     generator_stage = stage_class(config=combined_config)
                     self.stages.append(generator_stage)
-                    logger.info(f"#### Generator Stage '{stage_name}' enabled and added to pipeline ####")
+                    logger.info(f"\n#### Generator Stage '{stage_name}' enabled and added to pipeline ####")
                 except ModuleNotFoundError as e:
                     logger.error(f"Module '{module_path}' not found for generate stage '{stage_name}'.")
                     logger.debug(traceback.format_exc())  # Log full traceback
@@ -156,7 +160,7 @@ class Pipeline:
             try:
                 evaluate_stage = EvaluateStage(config={'config_path': evaluator_config})
                 self.stages.append(evaluate_stage)
-                logger.info("#### Evaluate Stage enabled and added to pipeline ####")
+                logger.info("\n#### Evaluate Stage enabled and added to pipeline ####")
             except Exception as e:
                 logger.error(f"Failed to initialize Evaluate Stage: {e}")
                 logger.debug(traceback.format_exc())  # Log full traceback
@@ -167,7 +171,7 @@ class Pipeline:
             try:
                 data_refinement_stage = DataRefinementStage(config={'config_path': data_refinement_config})
                 self.stages.append(data_refinement_stage)
-                logger.info("#### Data Refinement Stage enabled and added to pipeline ####")
+                logger.info("\n#### Data Refinement Stage enabled and added to pipeline ####")
             except Exception as e:
                 logger.error(f"Failed to initialize Data Refinement Stage: {e}")
                 logger.debug(traceback.format_exc())
@@ -179,7 +183,7 @@ class Pipeline:
             try:
                 classifier_stage = ClassifierStage(config={'config_path': classifier_config})
                 self.stages.append(classifier_stage)
-                logger.info("#### Classifier Stage enabled and added to pipeline #####")
+                logger.info("\n#### Classifier Stage enabled and added to pipeline #####")
             except Exception as e:
                 logger.error(f"Failed to initialize Classifier Stage: {e}")
                 logger.debug(traceback.format_exc())  # Log full traceback
@@ -190,7 +194,7 @@ class Pipeline:
             try:
                 benchmark_stage = BenchmarkStage(config=benchmark_config)
                 self.stages.append(benchmark_stage)
-                logger.info("#### Benchmark Stage enabled and added to pipeline #####")
+                logger.info("\n#### Benchmark Stage enabled and added to pipeline #####")
             except Exception as e:
                 logger.error(f"Failed to initialize Benchmark Stage: {e}")
                 logger.debug(traceback.format_exc())  # Log full traceback

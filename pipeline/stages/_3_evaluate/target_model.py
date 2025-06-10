@@ -17,6 +17,7 @@ class TargetModelEvaluateStage(AbstractEvaluateStage):
         self.input_data_path = self.config.get("candidate_synthetic_attack_path")
         self.output_path = self.config.get("target_llm_response_path")
         self.results = []
+        print(f"[INIT] Input data path: {self.input_data_path}")
 
     def response_model(self, prompt):
         """Call the target model to generate a response for a given prompt."""
@@ -62,8 +63,11 @@ class TargetModelEvaluateStage(AbstractEvaluateStage):
         """Load generated attacks, evaluate each via the target model, and save the results."""
         # Load the generated attacks data from the candidate synthetic attack path
         generated_attacks = pd.read_json(self.input_data_path)
+        print(f"[EXECUTE] Loaded {len(generated_attacks)} attacks.")
         
         for idx, row in generated_attacks.iterrows():
+            if idx % 50 == 0:
+                print(f"[EXECUTE] Processing row {idx+1}/{len(generated_attacks)}...")
             prompt_text = row['prompt']
             response_text = self.response_model(prompt_text)
             

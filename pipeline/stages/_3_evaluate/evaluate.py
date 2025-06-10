@@ -186,7 +186,7 @@ class EvaluateStage(AbstractEvaluateStage):
         """
         Executes the evaluation stage by delegating to the target model evaluation.
         """
-        print("Running Evaluate Stage. Delegating to TargetModelEvaluateStage.")
+        print("Running Evaluate Stage.")
         self.target_model_stage.execute()
         print("Running Evaluate Stage. Prompt response finished")
 
@@ -199,7 +199,10 @@ class EvaluateStage(AbstractEvaluateStage):
         jb_judge = JbJudge(self.judge_model_name)
 
         # Process each entry
+        count = 0 
         for entry in entries:
+            if count % 50 == 0:
+                print(f"[EVALUATE] Processing entry {count + 1}/{len(entries)}...")
             user_content = entry["prompt"]["text"]
             for resp in entry.get("responses", []):
                 model_content = resp["text"]

@@ -75,19 +75,19 @@ class IterativePromptGenerator(AbstractGenerateStage):
                 if "{SEED_TOKEN}" in content.get("text", ""):
                     seed_token = os.urandom(15).hex()
                     content["text"] = content["text"].replace("{SEED_TOKEN}", seed_token)
-                    logger.debug(f"Replaced {{SEED_TOKEN}} with {seed_token}")
+                    # logger.debug(f"Replaced {{SEED_TOKEN}} with {seed_token}")
                 if "{PROMPT_EXAMPLES}" in content.get("text", ""):
                     if len(sampled_data) < self.sample_size:
                         current_sample = sampled_data.copy()
                         logger.debug("Sample size less than configured 'prompt_retrieval_size'. Using entire sampled data.")
                     else:
                         current_sample = random.sample(sampled_data, self.sample_size)
-                        logger.debug(f"Randomly sampled {self.sample_size} items from sampled_data.")
+                        # logger.debug(f"Randomly sampled {self.sample_size} items from sampled_data.")
 
                     current_seed_hashes = [item.get("seed_SHA-256") for item in current_sample]
                     seed_hashes.extend(current_seed_hashes)
-                    logger.debug(f"Collected seed hashes: {current_seed_hashes}")
-                    logger.info(f"Collected seed hashes: {len(seed_hashes)}")
+                    # logger.debug(f"Collected seed hashes: {current_seed_hashes}")
+                    # logger.info(f"Collected seed hashes: {len(seed_hashes)}")
 
                     # Prepare the replacement text for {PROMPT_EXAMPLES}
                     prompt_examples = '\n\n'.join([f"<CASE>{item.get('text', '')}</CASE>" for item in current_sample])
@@ -152,7 +152,7 @@ class IterativePromptGenerator(AbstractGenerateStage):
             # Step 5: Extract Matches
             num_generated_cases = len(prompts)
             num_cases += num_generated_cases
-            logger.info(f"Iteration {num_iterations}: Generated {num_generated_cases} cases. Total cases: {num_cases}/{self.expected_cases}")
+            logger.info(f"\nIteration {num_iterations}: Generated {num_generated_cases} cases. Total cases: {num_cases}/{self.expected_cases}")
 
             if num_generated_cases == 0:
                 logger.warning("No prompts generated in this iteration. Continuing to next iteration.")
