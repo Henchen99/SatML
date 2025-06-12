@@ -1,0 +1,12 @@
+PyYAML
+dotenv
+pandas
+openai
+torchvision 
+transformers
+fastchat
+psutil
+accelerate
+nltk
+scikit-learn
+datasets

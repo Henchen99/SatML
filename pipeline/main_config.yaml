@@ -4,7 +4,7 @@ taxonomy:
 
 
 generate:
-  enabled: false # MASTER generation stage flag
+  enabled: true # MASTER generation stage flag
   default_config: # Default configuration parameters for the generation stage
     generation_strat: Default 
     sampled_attack_type: 
@@ -42,7 +42,7 @@ evaluator:
 
 
 data_refinement:
-  enabled: true # MASTER data refinement stage flag
+  enabled: false # MASTER data refinement stage flag
   maliciousness_threshold: 1 # filter out samples with maliciousness score above this threshold (0-10)
 
   # Semantic fuzzing parameters
@@ -76,6 +76,6 @@ classifier:
 
 
 benchmark: 
-    enabled: true
+    enabled: false
     model: models/Prompt-Guard-86M
     config_path: pipeline/stages/_6_benchmark/benchmark_config.yaml
