@@ -1,0 +1,40 @@
+# Environment Variables for Language Models
+# Copy this content to your .env file and fill in your actual values
+
+# ==========================================
+# FOR OPENAI PROVIDER (engine: openai)
+# ==========================================
+OPENAI_API_KEY=your-openai-api-key
+
+# Optional for OpenAI
+# OPENAI_ORGANIZATION=your-org-id
+
+
+# ==========================================  
+# FOR AZURE OPENAI PROVIDER (engine: azure)
+# ==========================================
+# Note: Azure uses OPENAI_API_KEY for the API key
+OPENAI_API_KEY=your-azure-openai-api-key-here
+BASE_URL=https://your-resource.openai.azure.com/
+DEPLOYMENT_NAME=gpt-4o-mini
+API_VERSION=2023-07-01-preview
+
+
+# ==========================================
+# FOR LLAMA3 PROVIDER (engine: llama3)  
+# ==========================================
+LLAMA3_BASE_URL=http://localhost:10001/v1
+# Optional for authenticated endpoints
+LLAMA3_API_KEY=your-llama3-api-key
+
+
+# ==========================================
+# INSTRUCTIONS
+# ==========================================
+# 1. Copy this content to a .env file in your project root
+# 2. Edit the .env file with your actual values
+# 3. The system will automatically load these values
+# 4. Change the "engine" in your config to switch providers:
+#    - engine: openai (uses OPENAI_API_KEY)
+#    - engine: azure (uses OPENAI_API_KEY + BASE_URL + DEPLOYMENT_NAME + API_VERSION)  
+#    - engine: llama3 (uses LLAMA3_BASE_URL + optional LLAMA3_API_KEY) 

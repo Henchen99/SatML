@@ -11,7 +11,7 @@ generate:
       - jailbreak # e.g. prompt_injection, rce
     version: 1 
     model: gpt-4o-mini
-    engine: openai
+    engine: openai  # Options: openai, azure, llama3
     max_tokens: 4096
     temperature: 1
     max_iterations: 15
@@ -19,6 +19,23 @@ generate:
     prompt_retrieval_size: 5
     sampled_data_path: data/1_collected_data/collected_data.json
     generated_attacks_path: data/3_generated_attacks/combined_generated_attacks.json
+    
+    # All sensitive configuration is loaded from environment variables (.env file)
+    # Required environment variables by provider:
+    #
+    # For OpenAI (engine: openai):
+    #   - OPENAI_API_KEY
+    #
+    # For Azure OpenAI (engine: azure):
+    #   - OPENAI_API_KEY (your Azure API key)
+    #   - BASE_URL (e.g. https://your-resource.openai.azure.com/)
+    #   - DEPLOYMENT_NAME (e.g. gpt-4o-mini)
+    #   - API_VERSION (e.g. 2023-07-01-preview)
+    #
+    # For Llama3 (engine: llama3):
+    #   - LLAMA3_BASE_URL (e.g. http://localhost:10001/v1)
+    #   - LLAMA3_API_KEY (optional, for authenticated endpoints)
+    
     prompt_template:
       role: system
       content:
