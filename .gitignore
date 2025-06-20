@@ -11,3 +11,22 @@ __pycache__/
 
 models/*
 !models/.gitkeep
+
+# Keep folder structure but ignore all contents
+data/1_collected_data/*
+!data/1_collected_data/.gitkeep
+data/2_annotated_output/*
+!data/2_annotated_output/.gitkeep
+data/3_generated_attacks/*
+!data/3_generated_attacks/.gitkeep
+data/4_generated_efficacy/*
+!data/4_generated_efficacy/.gitkeep
+data/5_data_refinement/*
+!data/5_data_refinement/.gitkeep
+!data/5_data_refinement/prompt_templates/.gitkeep
+data/6_data_preparation/*
+!data/6_data_preparation/.gitkeep
+data/7_classifier_dataset/*
+!data/7_classifier_dataset/.gitkeep
+data/8_benchmark_results/*
+!data/8_benchmark_results/.gitkeep

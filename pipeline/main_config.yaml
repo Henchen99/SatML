@@ -10,15 +10,32 @@ generate:
     sampled_attack_type: 
       - jailbreak # e.g. prompt_injection, rce
     version: 1 
-    model: gpt-4o-mini
-    engine: openai
+    model: gpt-4o
+    engine: azure  # Options: openai, azure, llama3
     max_tokens: 4096
     temperature: 1
-    max_iterations: 15
-    expected_cases: 15
+    max_iterations: 20
+    expected_cases: 20
     prompt_retrieval_size: 5
     sampled_data_path: data/1_collected_data/collected_data.json
     generated_attacks_path: data/3_generated_attacks/combined_generated_attacks.json
+    
+    # All sensitive configuration is loaded from environment variables (.env file)
+    # Required environment variables by provider:
+    #
+    # For OpenAI (engine: openai):
+    #   - OPENAI_API_KEY
+    #
+    # For Azure OpenAI (engine: azure):
+    #   - OPENAI_API_KEY (your Azure API key)
+    #   - BASE_URL (e.g. https://your-resource.openai.azure.com/)
+    #   - DEPLOYMENT_NAME (e.g. gpt-4o-mini)
+    #   - API_VERSION (e.g. 2023-07-01-preview)
+    #
+    # For Llama3 (engine: llama3):
+    #   - LLAMA3_BASE_URL (e.g. http://localhost:10001/v1)
+    #   - LLAMA3_API_KEY (optional, for authenticated endpoints)
+    
     prompt_template:
       role: system
       content:
@@ -59,6 +76,10 @@ data_refinement:
   prompt_format: plaintext # format of the prompt (plaintext, yaml, markdown, yaml)
   config_path: pipeline/stages/_4_data_refinement/data_refinement_config.yaml
 
+data_preparation:
+  enabled: false
+  config_path: pipeline/stages/_5_data_preparation/data_preparation_config.yaml
+  
 
 classifier:
   enabled: false
@@ -71,11 +92,11 @@ classifier:
     per_device_eval_batch_size: 2
     weight_decay: 0.01
     validation_split: 0.2
-  config_path: pipeline/stages/_5_classifier/classifier_config.yaml
+  config_path: pipeline/stages/_6_classifier/classifier_config.yaml
   data_path: # path for data to train classifier 
 
 
 benchmark: 
     enabled: false
     model: models/Prompt-Guard-86M
-    config_path: pipeline/stages/_6_benchmark/benchmark_config.yaml
+    config_path: pipeline/stages/_7_benchmark/benchmark_config.yaml

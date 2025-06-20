@@ -1,5 +1,0 @@
-{
-    "refined_synthetic_attacks_test": "data/6_classifier_dataset/refined_synthetic_attacks_test.csv",
-    "hard_negative_data": "data/7_benchmark_results/hard_negative_data_{model}.csv",
-    "benchmark_results": "data/7_benchmark_results/results/"
-}

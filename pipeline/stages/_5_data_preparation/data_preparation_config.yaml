@@ -1,0 +1,12 @@
+generated_attacks_synthetic_attacks: data/3_generated_attacks/combined_generated_attacks.json
+evaluated_candidate_synthetic_attacks: data/4_generated_efficacy/evaluated_attacks.json
+combined_refined_synthetic_attacks: data/5_data_refinement/combined_refined_synthetic_attacks.json
+
+labelled_attacks: data/6_data_preparation/labelled_attacks.json
+clustered_attacks: data/6_data_preparation/clustered_attacks.json
+combined_labelled_attacks: data/6_data_preparation/combined_labelled_attacks.csv
+
+FINAL_synthetic_attacks_train: data/7_classifier_dataset/FINAL_synthetic_attacks_train.csv
+FINAL_synthetic_attacks_val: data/7_classifier_dataset/FINAL_synthetic_attacks_val.csv
+FINAL_synthetic_attacks_test: data/7_classifier_dataset/FINAL_synthetic_attacks_test.csv
+benign_pool: data/6_data_preparation/benign_prompts.csv

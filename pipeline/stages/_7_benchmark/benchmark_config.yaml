@@ -1,0 +1,3 @@
+FINAL_synthetic_attacks_test: data/7_classifier_dataset/FINAL_synthetic_attacks_test.csv
+hard_negative_data: data/8_benchmark_results/hard_negative_data_{model}.csv
+benchmark_results: data/8_benchmark_results/results/

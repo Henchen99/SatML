@@ -23,8 +23,9 @@ from pipeline.stages._1_taxonomy.taxonomy import TaxonomyStage
 from pipeline.stages._2_generate.base_generate import AbstractGenerateStage
 from pipeline.stages._3_evaluate.evaluate import EvaluateStage
 from pipeline.stages._4_data_refinement.data_refining import DataRefinementStage
-from pipeline.stages._5_classifier.classifier import ClassifierStage
-from pipeline.stages._6_benchmark.benchmark import BenchmarkStage
+from pipeline.stages._5_data_preparation.data_preparation import DataPreparationStage
+from pipeline.stages._6_classifier.classifier import ClassifierStage
+from pipeline.stages._7_benchmark.benchmark import BenchmarkStage
 
 # Configure logging to include DEBUG level and format tracebacks
 logging.basicConfig(
@@ -176,6 +177,21 @@ class Pipeline:
                 logger.error(f"Failed to initialize Data Refinement Stage: {e}")
                 logger.debug(traceback.format_exc())
 
+        # Data Preparation Stage
+        if config.get('data_preparation', {}).get('enabled', False):
+            data_preparation_config_meta = config['data_preparation']
+            try:
+                config_path = data_preparation_config_meta.get('config_path')
+                with open(config_path, 'r') as f:
+                    data_preparation_config = yaml.safe_load(f)
+
+                data_preparation_stage = DataPreparationStage(config=data_preparation_config)
+                self.stages.append(data_preparation_stage)
+                logger.info("\n#### Data Preparation Stage enabled and added to pipeline ####")
+
+            except Exception as e:
+                logger.error(f"Failed to initialize Data Preparation Stage: {e}")
+                logger.debug(traceback.format_exc())
 
         # Classifier Stage
         if config.get('classifier', {}).get('enabled', False):
@@ -190,14 +206,24 @@ class Pipeline:
 
         # Benchmark Stage
         if config.get('benchmark', {}).get('enabled', False):
-            benchmark_config = config['benchmark']
+            benchmark_meta = config['benchmark']
             try:
+                # Load actual config from file
+                config_path = benchmark_meta.get("config_path")
+                if not config_path:
+                    raise ValueError("Missing 'config_path' for benchmark stage")
+
+                with open(config_path, "r") as f:
+                    benchmark_config = yaml.safe_load(f)
+
+                # Initialize benchmark stage with full config
                 benchmark_stage = BenchmarkStage(config=benchmark_config)
                 self.stages.append(benchmark_stage)
                 logger.info("\n#### Benchmark Stage enabled and added to pipeline #####")
+
             except Exception as e:
                 logger.error(f"Failed to initialize Benchmark Stage: {e}")
-                logger.debug(traceback.format_exc())  # Log full traceback
+                logger.debug(traceback.format_exc())
 
     def run(self):
         logger.info("===============================================")
