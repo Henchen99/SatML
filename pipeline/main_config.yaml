@@ -10,12 +10,12 @@ generate:
     sampled_attack_type: 
       - jailbreak # e.g. prompt_injection, rce
     version: 1 
-    model: gpt-4o
-    engine: azure  # Options: openai, azure, llama3
+    model: gpt-4o-mini
+    engine: openai  # Options: openai, azure, llama3
     max_tokens: 4096
     temperature: 1
-    max_iterations: 20
-    expected_cases: 20
+    max_iterations: 10
+    expected_cases: 10
     prompt_retrieval_size: 5
     sampled_data_path: data/1_collected_data/collected_data.json
     generated_attacks_path: data/3_generated_attacks/combined_generated_attacks.json
@@ -54,16 +54,16 @@ generate:
 
 
 evaluator:
-  enabled: false
+  enabled: true
   config_path: pipeline/stages/_3_evaluate/evaluate_config.yaml
 
 
 data_refinement:
-  enabled: false # MASTER data refinement stage flag
+  enabled: true # MASTER data refinement stage flag
   maliciousness_threshold: 1 # filter out samples with maliciousness score above this threshold (0-10)
 
   # Semantic fuzzing parameters
-  synonym_replacement_enabled: false
+  synonym_replacement_enabled: true
   paraphrasing_enabled: false
 
   # Syntactic fuzzing parameters
@@ -77,12 +77,12 @@ data_refinement:
   config_path: pipeline/stages/_4_data_refinement/data_refinement_config.yaml
 
 data_preparation:
-  enabled: false
+  enabled: true
   config_path: pipeline/stages/_5_data_preparation/data_preparation_config.yaml
   
 
 classifier:
-  enabled: false
+  enabled: true
   training_hyperparams:
     learning_rate: 0.001
     optimizer: adam
@@ -97,6 +97,6 @@ classifier:
 
 
 benchmark: 
-    enabled: false
+    enabled: true
     model: models/Prompt-Guard-86M
     config_path: pipeline/stages/_7_benchmark/benchmark_config.yaml

@@ -113,23 +113,6 @@ class DataRefinementStage(AbstractDataRefinementStage):
 
             print(f"Combined and saved to {combined_output_path} — total entries: {len(combined_data)}")
 
-
-            # Split the data into train, validation, and test sets.
-            split_config = {
-                "refined_synthetic_attacks": combined_output_path,
-                "refined_synthetic_attacks_train": merged_config["refined_synthetic_attacks_train"],
-                "refined_synthetic_attacks_val": merged_config["refined_synthetic_attacks_val"],
-                "refined_synthetic_attacks_test": merged_config["refined_synthetic_attacks_test"],
-                "benign_pool": merged_config["benign_pool"]
-            }
-            
-            # Run the data splitting stage.
-            data_split_stage = DataSplitStage(split_config)
-            train_df, val_df, test_df = data_split_stage.execute()
-            print("Data splitting completed. Train samples:", len(train_df),
-                  "Validation samples:", len(val_df),
-                  "Test samples:", len(test_df))
-            
         except Exception as e:
             print(f"Error in ConcreteClassifierStage: {e}")
             raise

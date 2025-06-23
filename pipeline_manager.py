@@ -6,6 +6,7 @@ import json
 import yaml
 import logging
 import importlib
+import time
 import inspect
 from pathlib import Path
 import traceback  # Import traceback module for detailed error information
@@ -228,12 +229,29 @@ class Pipeline:
     def run(self):
         logger.info("===============================================")
         logger.info("Starting pipeline execution")
-        for stage in self.stages:
+        
+        generate_stages_completed = False
+        
+        for i, stage in enumerate(self.stages):
             try:
                 logger.info("===============================================")
                 logger.debug(f"Running stage: {stage.__class__.__name__}")
                 stage.execute()
                 logger.info(f"Stage {stage.__class__.__name__} completed successfully. ✅")
+                
+                # Check if this is a generate stage and if all generate stages are done
+                if isinstance(stage, AbstractGenerateStage):
+                    # Check if this is the last generate stage
+                    remaining_stages = self.stages[i+1:]
+                    has_more_generate_stages = any(isinstance(s, AbstractGenerateStage) for s in remaining_stages)
+                    
+                    if not has_more_generate_stages and not generate_stages_completed:
+                        logger.info("===============================================")
+                        logger.info("All generate stages completed. Merging generated attacks...")
+                        self.merge_generated_attacks()
+                        generate_stages_completed = True
+                        logger.info("Generated attacks merged successfully. ✅")
+                        
             except Exception as e:
                 logger.error(f"Error running stage {stage.__class__.__name__}: {e} ❌")
                 logger.debug(traceback.format_exc())  # Log full traceback
@@ -254,6 +272,3 @@ class Pipeline:
 if __name__ == "__main__":
     pipeline = Pipeline()
     pipeline.run()
-    logger.info("Running merge_generated_attacks method.")
-    pipeline.merge_generated_attacks()
-    logger.info("Finished running merge_generated_attacks method.")
